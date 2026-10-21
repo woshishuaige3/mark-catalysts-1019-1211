@@ -152,11 +152,25 @@ dialog.rpt[open]{animation:rise .35s}
 .chain .nd.v::after{border-color:var(--ink)}
 .chain .nd.v em{position:absolute;top:-9px;left:10px;background:var(--red);color:#fff;font-style:normal;font-size:10px;padding:0 5px;font-family:var(--mono);z-index:2}
 .chain-note{font-size:12.5px;color:var(--muted);margin-top:8px}
-.plain{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.plain div{background:var(--paper);padding:10px 12px;font-size:12.5px;line-height:1.6}
-.plain div:first-child{background:#fff3d6}
-.plain b{display:block;font-family:var(--serif);font-size:14px;margin-bottom:3px}
-@media (max-width:820px){.plain{grid-template-columns:1fr}}
+/* 普通人版：整块放进一块浅色面板，和上面的简介、下面的数字分开 */
+.intro{margin-top:20px;background:var(--paper2);border:1px solid var(--line);border-left:4px solid var(--ink);padding:16px 18px 18px}
+.intro>h4{margin-bottom:10px}
+.intro .lead{font-family:var(--serif);font-size:18px;font-weight:700;line-height:1.45;margin:0 0 10px}
+.intro .note{font-size:13px;color:#4f483f;line-height:1.7;margin:0 0 14px}
+.intro .note b{color:var(--ink)}
+.share{display:flex;height:26px;font-size:11.5px;font-weight:600;color:#fff;font-family:var(--mono)}
+.share span{display:flex;align-items:center;padding-left:8px;white-space:nowrap;overflow:hidden}
+.plain{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}
+.plain div{background:#fffdf8;border-top:4px solid var(--c);padding:10px 12px;font-size:12.5px;line-height:1.6;color:var(--muted)}
+.plain b{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-family:var(--serif);font-size:14px;color:var(--ink);margin-bottom:3px}
+.plain b em{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--c)}
+.intro .chain .nd{background:#fffdf8}
+.intro .chain .nd.v{background:var(--ink)}
+.chain .nd.v .pd{display:block;margin-top:6px;padding-top:6px;border-top:1px solid #4a443c;color:#d8cfc0;line-height:1.55}
+.lic{display:flex;gap:10px;align-items:baseline;margin-top:10px;background:#fffdf8;border:1px dashed var(--red);padding:9px 12px;font-size:12.5px;color:var(--muted);line-height:1.6}
+.lic b{flex:none;color:var(--red);font-family:var(--serif);font-size:14px}
+.sechead{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--muted);margin:0 0 8px}
+@media (max-width:820px){.plain{grid-template-columns:1fr}.intro{padding:14px}.lic{flex-direction:column;gap:2px}}
 .segrow{padding:6px 0 8px;border-bottom:1px dashed var(--line)}
 .segrow:last-of-type{border-bottom:none}
 .segrow>b{display:block;font-size:12.5px;margin-bottom:3px}
@@ -513,19 +527,15 @@ const REPORTS = {
   VICR:{
     tk:"VICR", nm:"Vicor", cn:"维科", q:"Q3 2026", date:"10/20 盘前",
     lede:"Vicor 做电源模块：把机柜里的电一步步降压，最后在 AI 芯片正下方变成芯片需要的“低电压、大电流”。这一季营收同比 +78.5%，毛利率一季跳升 10 个点，专利授权收入翻了一倍多。",
-    plain:[
-      ["先打个比方","把电想成水：电压是水压，电流是水量。AI 芯片要的是“极低水压、超大水量”，不到 1 伏的电压、上千安培的电流。大电流走远路会在线路上白白发热，所以要先用高电压把电送到芯片附近，越靠近芯片再越往下降。"],
-      ["Brick 砖块电源","火柴盒大小的电源块，装在服务器主板上，把机柜送来的 48V 降到 12V 左右。老业务，这季收入 5830 万美元。"],
-      ["VPD 垂直供电模块","薄片状，直接贴在芯片背面正下方，做最后一步：把电压降到 1V 以下、电流放大几十倍。离芯片最近，路上浪费最少。这是 AI 需求拉动的主角。"],
-      ["专利授权","别家做类似的垂直供电方案，用到 Vicor 的专利，就要交专利费。这季专利费 6660 万美元，占营收三分之一。"]
-    ],
+    note:"<b>先打个比方：</b>把电想成水，电压是水压，电流是水量。AI 芯片要的是“极低水压、超大水量”：不到 1 伏的电压、上千安培的电流。大电流走远路会在线路上白白发热，所以先用高电压把电送到芯片附近，越靠近芯片越往下降。下面这条路上，<b>黑底的两步就是 Vicor 卖的东西</b>：",
+    lic:"别家做垂直供电用到 Vicor 的专利就要交钱。这季专利费 6660 万美元，占营收三分之一。",
     // 先进产品 = 含授权收入；72.3 = 138.9 − 66.6
     chain:[
       {b:"48V",i:"机柜电源",t:"电从机柜送进服务器"},
-      {b:"48V → 12V",i:"第一次降压",t:"Brick 砖块电源",v:"Brick"},
+      {b:"48V → 12V",i:"第一次降压",v:"Brick 砖块电源",d:"火柴盒大小，装在主板上。老业务，这季收入 5830 万美元。"},
       {b:"主板走线",i:"传统做法",t:"在芯片四周摆一圈小稳压器（VR）再降一次"},
-      {b:"< 1V · 上千安培",i:"最后一步",t:"VPD 模块贴在芯片正下方",v:"VPD"},
-      {b:"AI 芯片",i:"GPU / 定制芯片",t:"功耗越大，最后这一步越难"}
+      {b:"< 1V · 上千安培",i:"最后一步",v:"VPD 垂直供电",d:"薄片状，贴在芯片正下方“竖着”供电。离芯片最近、浪费最少，AI 需求拉动的主角。"},
+      {b:"AI 芯片",i:"GPU / 定制芯片",t:"功耗越大，四周越塞不下稳压器，最后这一步越难"}
     ],
     kpi:[
       {l:"营收",v:"$1.971",u:"亿",d:'<span class="up">▲ 78.5%</span> 同比 · <span class="vs">预期 $1.84–1.87 亿</span>'},
@@ -582,11 +592,12 @@ REPORTS.SPCX = {
   tk:"SPCX", nm:"SpaceX", cn:"太空探索", q:"Q3 2026", date:"10/20 盘后",
   teaser:[["$145.8亿","营收 ▲161%"],["$75.6亿","AI 收入"],["$195.9亿","资本开支"]],
   lede:"SpaceX 现在做三门生意：火箭发射、Starlink 卫星上网，以及并入 xAI 之后的 AI 业务。这一季营收同比 +161%，到 145.8 亿美元；AI 第一次成为最大的业务，也第一次赚钱。但一季砸下 196 亿美元建数据中心，花钱仍比赚钱快。",
+  lead:"SpaceX 已经不只是火箭公司：这一季每收入 100 美元，",
+  share:[["AI",52,"#c8361d"],["Starlink",36,"#2b6cb0"],["火箭",12,"#3d4f5c"]],
   plain:[
-    ["先说结论","SpaceX 已经不只是火箭公司。这一季每收入 100 美元，约 52 美元来自 AI，36 美元来自 Starlink，只有 12 美元来自火箭。"],
-    ["太空 · 火箭","用猎鹰 9 号和星舰把卫星、货物、宇航员送上太空，客户有 NASA、美国军方和商业公司。这季 35 次发射里，23 次是给自己送 Starlink 卫星。"],
-    ["连接 · Starlink","几千颗低轨卫星组成的上网网络，偏远地区、飞机、轮船都能用，按月收费。这是公司最稳定、最赚钱的部分。"],
-    ["超级智能 · AI","原来的 xAI，公司现在叫它“超级智能”（SI）。最大一块收入是把数据中心的 GPU 算力租给别的 AI 公司，另外还有 Grok 聊天机器人、编程工具 Cursor 和 X 的广告。"]
+    ["超级智能 · AI","原来的 xAI。主要是把 GPU 算力租给别的 AI 公司，还有 Grok、编程工具 Cursor 和 X 的广告。","#c8361d",52],
+    ["连接 · Starlink","几千颗低轨卫星组成的上网网络，偏远地区、飞机、轮船都能用，按月收费。全公司最赚钱的部分。","#2b6cb0",36],
+    ["太空 · 火箭","帮 NASA、军方和商业公司发射卫星和宇航员。这季 35 次发射，23 次是给自己送 Starlink 卫星。","#3d4f5c",12]
   ],
   kpi:[
     {l:"营收",v:"$145.8",u:"亿",d:'<span class="up">▲ 161%</span> 同比 · <span class="vs">预期 $127.2 亿</span>'},
@@ -658,6 +669,13 @@ function spcxSegRows(seg){
   return seg.map(s=>`<div class="segrow"><b style="color:${s.c}">${s.n}</b>${bar(s.rev,s.c,"收入")}${bar(s.op,s.c,"经营利润")}${bar(s.cap,"#9a8f80","资本开支")}</div>`).join("");
 }
 
+// 普通人版（SpaceX）：结论句 + 比例条 + 三栏；每栏顶边颜色和比例条对应
+function plainHTML(R){
+  const lead=R.lead?`<p class="lead">${R.lead}</p>`:"";
+  const share=R.share?`<div class="share" role="img" aria-label="收入构成">${R.share.map(([l,p,c])=>`<span style="flex:${p};background:${c}">${l} ${p}</span>`).join("")}</div>`:"";
+  return lead+share+`<div class="plain">${R.plain.map(([h,t,c,p])=>`<div style="--c:${c}"><b>${h}${p?`<em>${p} 美元</em>`:''}</b>${t}</div>`).join("")}</div>`;
+}
+
 function spcxHTML(R){
   return `<div class="rp">
     <button class="x" aria-label="关闭" onclick="document.getElementById('rpt').close()">×</button>
@@ -669,11 +687,11 @@ function spcxHTML(R){
       </div>
       <div class="verdict">营收<b>大超预期</b>盘后涨约 8%</div>
     </div>
-    <section>
+    <section class="intro">
       <h4>它做什么：普通人版<small>先看懂三门生意，再看数字</small></h4>
-      <div class="plain">${R.plain.map(([h,t])=>`<div><b>${h}</b>${t}</div>`).join("")}</div>
+      ${plainHTML(R)}
     </section>
-    <section><div class="kpis">${R.kpi.map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}<small>${k.u}</small></div><div class="d">${k.d}</div></div>`).join("")}</div></section>
+    <section><div class="sechead">这一季的核心数字</div><div class="kpis">${R.kpi.map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}<small>${k.u}</small></div><div class="d">${k.d}</div></div>`).join("")}</div></section>
     <section class="charts">
       <div class="chart">
         <h4>季度营收<small>亿美元 · 悬停看明细</small></h4>
@@ -795,14 +813,13 @@ function vicrHTML(R,dlg){
       </div>
       <div class="verdict">营收<b>超预期</b>EPS 与预期接近</div>
     </div>
-    <section>
+    <section class="intro">
       <h4>它卖什么：普通人版<small>先看懂产品，再看数字</small></h4>
-      <div class="plain">${R.plain.map(([h,t])=>`<div><b>${h}</b>${t}</div>`).join("")}</div>
-      <h4 style="margin-top:14px">电从机柜走到芯片的几步<small>黑底 = Vicor 的位置</small></h4>
-      <div class="chain">${R.chain.map(n=>`<div class="nd ${n.v?'v':''}">${n.v?`<em>Vicor · ${n.v}</em>`:''}<b>${n.b}</b><i>${n.i}</i>${n.t}</div>`).join("")}</div>
-      <p class="chain-note">黑底是 Vicor 卖东西的位置。AI 芯片功耗越大，芯片四周越塞不下足够的稳压器；VPD 改成从芯片正下方“竖着”供电，所以叫垂直供电。</p>
+      <p class="note">${R.note}</p>
+      <div class="chain">${R.chain.map(n=>`<div class="nd ${n.v?'v':''}">${n.v?`<em>Vicor 卖</em>`:''}<b>${n.b}</b><i>${n.v||n.i}</i>${n.v?`${n.i}<span class="pd">${n.d}</span>`:n.t}</div>`).join("")}</div>
+      <div class="lic"><b>＋ 专利授权</b><span>${R.lic}</span></div>
     </section>
-    <section><div class="kpis">${R.kpi.map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}<small>${k.u}</small></div><div class="d">${k.d}</div></div>`).join("")}</div></section>
+    <section><div class="sechead">这一季的核心数字</div><div class="kpis">${R.kpi.map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}<small>${k.u}</small></div><div class="d">${k.d}</div></div>`).join("")}</div></section>
     <section class="charts">
       <div class="chart">
         <h4>季度营收<small>百万美元 · 悬停看明细</small></h4>
