@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 财报季催化剂日历 2026 Q3</title>
+<style>
+:root{
+  --paper:#f6f1e7; --paper2:#efe7d8; --ink:#1d1a16; --muted:#7a7166; --line:#d9cfbd;
+  --red:#c8361d;
+  --macro:#1f3a5f; --cloud:#c8361d; --compute:#0f7a5c; --gtc:#76b900;
+  --test:#8a5a00; --optic:#2b6cb0; --mem:#7b3fa0; --cool:#d06a00; --power:#a0303a; --app:#3d4f5c;
+  --serif:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC",Georgia,serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",-apple-system,sans-serif;
+  --mono:"SF Mono",Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;
+  background-image:radial-gradient(rgba(0,0,0,.035) 1px,transparent 1px);background-size:4px 4px;padding-bottom:72px}
+.wrap{max-width:1280px;margin:0 auto;padding:36px 28px 0}
+header{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;border-bottom:3px double var(--ink);padding-bottom:18px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--red);text-transform:uppercase}
+h1{font-family:var(--serif);font-size:clamp(28px,4vw,46px);font-weight:900;line-height:1.1;margin:6px 0 8px;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--red)}
+.sub{color:var(--muted);max-width:640px}
+.stamp{border:2px solid var(--red);color:var(--red);font-family:var(--mono);font-size:11px;padding:8px 12px;transform:rotate(2deg);text-align:center;line-height:1.6}
+
+/* three guns */
+.guns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:22px 0}
+.gun{background:#fffdf8;border:1px solid var(--line);padding:16px 18px;position:relative;cursor:pointer;transition:transform .2s,box-shadow .2s;opacity:0;animation:rise .6s forwards}
+.gun:nth-child(2){animation-delay:.08s}.gun:nth-child(3){animation-delay:.16s}
+.gun:hover{transform:translateY(-3px);box-shadow:4px 4px 0 var(--ink)}
+.gun .n{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.gun .d{font-family:var(--serif);font-size:30px;font-weight:900;line-height:1.1;margin:2px 0}
+.gun .t{font-weight:600}
+.gun .x{color:var(--muted);font-size:12.5px;margin-top:4px}
+.gun .cd{position:absolute;top:14px;right:16px;text-align:right;font-family:var(--mono)}
+.gun .cd b{display:block;font-size:26px;color:var(--red);line-height:1}
+.gun .cd span{font-size:10px;color:var(--muted)}
+.gun.s{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.gun.s .n,.gun.s .x,.gun.s .cd span{color:#b9b0a2}
+.gun.s:hover{box-shadow:4px 4px 0 var(--red)}
+
+/* filters */
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 14px}
+.bar .lbl{font-family:var(--mono);font-size:11px;color:var(--muted);margin-right:4px}
+.chipf{border:1px solid var(--line);background:#fffdf8;border-radius:999px;padding:4px 11px 4px 9px;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:var(--sans);color:var(--ink)}
+.chipf i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chipf.off{opacity:.35}
+.chipf.all{font-weight:600}
+.toggle{margin-left:auto;font-size:12.5px;color:var(--muted);display:flex;gap:6px;align-items:center;cursor:pointer;user-select:none}
+
+/* layout */
+.main{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+.cal{background:#fffdf8;border:1px solid var(--ink);min-width:0}
+.dow{display:grid;grid-template-columns:64px repeat(5,minmax(0,1fr));border-bottom:1px solid var(--ink);font-family:var(--mono);font-size:11px;color:var(--muted)}
+.dow div{padding:6px 8px;border-left:1px solid var(--line)}
+.dow div:first-child{border-left:none}
+.week{display:grid;grid-template-columns:64px repeat(5,minmax(0,1fr));border-bottom:1px solid var(--line);position:relative}
+.week:last-child{border-bottom:none}
+.wk{padding:8px 6px;font-family:var(--mono);font-size:10.5px;color:var(--muted);border-right:1px solid var(--line);line-height:1.3}
+.wk b{display:block;font-family:var(--serif);color:var(--ink);font-size:15px}
+.wk .tag{display:inline-block;margin-top:6px;background:var(--red);color:#fff;padding:1px 5px;font-size:10px;letter-spacing:.05em}
+.day{border-left:1px solid var(--line);padding:6px 6px 8px;min-height:92px;min-width:0;position:relative;transition:background .2s}
+.week .day:nth-child(2){border-left:none}
+.day .dn{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:4px}
+.day .dn .heat{display:flex;gap:2px}
+.day .dn .heat i{width:5px;height:5px;background:var(--red);border-radius:1px}
+.day.hot{background:repeating-linear-gradient(-45deg,rgba(200,54,29,.06) 0 6px,transparent 6px 12px)}
+.day.past{opacity:.45}
+.day.today{box-shadow:inset 0 0 0 2px var(--ink)}
+.day.today .dn::after{content:"今天";background:var(--ink);color:var(--paper);padding:0 5px;font-size:10px}
+.day.mon1 .dn b{color:var(--red)}
+.ev{display:flex;align-items:center;gap:5px;font-size:12px;line-height:1.25;padding:3px 5px;margin:2px 0;border-radius:3px;cursor:pointer;background:var(--paper);border-left:3px solid var(--c);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:transform .12s, background .12s}
+.ev:hover{background:var(--paper2);transform:translateX(2px)}
+.ev .tk{font-family:var(--mono);font-weight:700;font-size:11px}
+.ev .nm{color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.ev.est{border-left-style:dashed}
+.ev.est .tk::after{content:"≈";color:var(--muted);font-weight:400;margin-left:1px}
+.ev.big{background:var(--c);color:#fff;border-left-color:var(--ink);font-weight:600}
+.ev.big .nm{color:rgba(255,255,255,.85)}
+.ev.lead::before{content:"◆";color:var(--red);font-size:9px}
+.ev.big.lead::before{color:#fff}
+.ev.sel{outline:2px solid var(--ink);outline-offset:1px}
+.span{position:absolute;height:20px;top:24px;background:var(--c);color:#fff;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:3px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}
+.day.hasspan{padding-top:48px}
+.day.hasspan .dn{position:absolute;top:6px;left:6px;right:6px}
+
+/* side */
+aside{position:sticky;top:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.card{background:#fffdf8;border:1px solid var(--line);padding:16px}
+.card h3{font-family:var(--serif);font-size:17px;margin-bottom:8px}
+.card h3 small{font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:400;margin-left:6px}
+#detail .when{font-family:var(--mono);font-size:12px;color:var(--muted)}
+#detail .big{font-family:var(--serif);font-size:24px;font-weight:900;line-height:1.15;margin:4px 0 8px}
+#detail .pill{display:inline-block;font-size:11px;color:#fff;padding:1px 7px;border-radius:999px;margin-right:4px}
+#detail .flag{display:inline-block;font-size:11px;border:1px solid var(--line);padding:0 6px;border-radius:999px;margin-right:4px;color:var(--muted)}
+#detail p{margin-top:10px;font-size:13.5px}
+#detail .sameday{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;font-size:12.5px;color:var(--muted)}
+#detail .sameday span{display:inline-block;background:var(--paper);border-radius:3px;padding:1px 6px;margin:2px 3px 0 0;color:var(--ink);font-family:var(--mono);font-size:11px;cursor:pointer}
+.empty{color:var(--muted);font-size:13px}
+.watch li{list-style:none;display:flex;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13px}
+.watch li:last-child{border:none}
+.watch li b{font-family:var(--serif);color:var(--red);font-size:18px;line-height:1}
+.watch .rule{font-size:12px;color:var(--muted);margin-top:8px;background:var(--paper);padding:8px}
+.risk li{list-style:none;font-size:12.5px;padding:4px 0 4px 14px;position:relative}
+.risk li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:2px;background:var(--red)}
+.legend{font-size:11.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.lg-est{width:14px;height:10px;border-left:3px dashed var(--ink);background:var(--paper)}
+.lg-hot{width:14px;height:10px;background:repeating-linear-gradient(-45deg,rgba(200,54,29,.25) 0 3px,transparent 3px 6px)}
+
+/* before */
+.before{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--muted)}
+.before .lbl{font-family:var(--mono);font-size:11px}
+.before .b{background:#fffdf8;border:1px solid var(--line);padding:4px 10px}
+.before .b b{color:var(--ink);font-family:var(--mono);margin-right:4px}
+footer{margin-top:22px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
+footer a{color:var(--muted)}
+
+/* earnings report card */
+.ev.done::after{content:"财报";margin-left:auto;flex:none;font-size:9.5px;background:var(--ink);color:var(--paper);padding:0 4px;border-radius:2px;letter-spacing:.05em}
+.rptbtn{margin-top:12px;width:100%;background:var(--ink);color:var(--paper);border:none;padding:10px 12px;font-family:var(--sans);font-size:13px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.rptbtn:hover{background:var(--red)}
+.mini{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.mini div{background:var(--paper);padding:6px 8px}
+.mini b{display:block;font-family:var(--serif);font-size:18px;line-height:1.1}
+.mini span{font-size:10.5px;color:var(--muted)}
+dialog.rpt{border:1px solid var(--ink);background:#fffdf8;color:var(--ink);padding:0;width:min(1000px,calc(100vw - 24px));max-height:calc(100vh - 24px);margin:auto;box-shadow:8px 8px 0 var(--ink)}
+dialog.rpt::backdrop{background:rgba(29,26,22,.55)}
+dialog.rpt[open]{animation:rise .35s}
+.rp{padding:22px 26px 26px;position:relative}
+.rp .x{position:sticky;top:0;float:right;margin:-8px -10px 0 0;background:var(--ink);color:var(--paper);border:none;width:32px;height:32px;font-size:18px;cursor:pointer;z-index:3}
+.rp .x:hover{background:var(--red)}
+.rp-hd{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:end;border-bottom:3px double var(--ink);padding-bottom:14px}
+.rp-hd h2{font-family:var(--serif);font-size:clamp(24px,3.4vw,36px);font-weight:900;line-height:1.1;margin:4px 0}
+.rp-hd h2 small{font-family:var(--mono);font-size:14px;color:var(--muted);font-weight:400;margin-left:8px}
+.rp-hd .lede{color:var(--muted);max-width:620px;font-size:13.5px}
+.verdict{border:2px solid var(--red);color:var(--red);font-family:var(--mono);font-size:11px;padding:8px 12px;transform:rotate(2deg);text-align:center;line-height:1.5}
+.verdict b{display:block;font-size:20px;font-family:var(--serif)}
+.rp h4{font-family:var(--serif);font-size:16px;margin:0 0 8px;display:flex;align-items:baseline;gap:8px}
+.rp h4 small{font-family:var(--mono);font-size:10px;color:var(--muted);font-weight:400}
+.rp section{margin-top:20px}
+.chain{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0;align-items:stretch}
+.chain .nd{border:1px solid var(--line);background:var(--paper);padding:10px 10px 10px 12px;position:relative;font-size:12px;color:var(--muted)}
+.chain .nd+.nd{border-left:none}
+.chain .nd:not(:last-child)::after{content:"";position:absolute;right:-7px;top:50%;width:12px;height:12px;background:inherit;border-top:1px solid var(--line);border-right:1px solid var(--line);transform:translateY(-50%) rotate(45deg);z-index:1}
+.chain .nd b{display:block;font-family:var(--mono);font-size:15px;color:var(--ink)}
+.chain .nd i{font-style:normal;display:block;font-weight:600;color:var(--ink);font-size:12.5px;margin:2px 0}
+.chain .nd.v{background:var(--ink);color:#c9c0b2;border-color:var(--ink)}
+.chain .nd.v b,.chain .nd.v i{color:var(--paper)}
+.chain .nd.v::after{border-color:var(--ink)}
+.chain .nd.v em{position:absolute;top:-9px;left:10px;background:var(--red);color:#fff;font-style:normal;font-size:10px;padding:0 5px;font-family:var(--mono);z-index:2}
+.chain-note{font-size:12.5px;color:var(--muted);margin-top:8px}
+.plain{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.plain div{background:var(--paper);padding:10px 12px;font-size:12.5px;line-height:1.6}
+.plain div:first-child{background:#fff3d6}
+.plain b{display:block;font-family:var(--serif);font-size:14px;margin-bottom:3px}
+@media (max-width:820px){.plain{grid-template-columns:1fr}}
+.segrow{padding:6px 0 8px;border-bottom:1px dashed var(--line)}
+.segrow:last-of-type{border-bottom:none}
+.segrow>b{display:block;font-size:12.5px;margin-bottom:3px}
+.sb{display:grid;grid-template-columns:56px minmax(0,1fr) 44px;gap:8px;align-items:center;font-size:11px;color:var(--muted);padding:1px 0}
+.sb .bar{height:9px;background:var(--paper);position:relative}
+.sb .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:0 2px 2px 0}
+.sb em{font-style:normal;font-family:var(--mono);color:var(--ink);text-align:right}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{border:1px solid var(--line);padding:12px 14px}
+.kpi .l{font-size:12px;color:var(--muted)}
+.kpi .v{font-family:var(--serif);font-size:30px;font-weight:900;line-height:1.1;margin:2px 0}
+.kpi .v small{font-size:14px;font-weight:600}
+.kpi .d{font-size:12px}
+.kpi .d .up{color:var(--compute);font-weight:600}
+.kpi .d .vs{color:var(--muted)}
+.charts{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
+.chart{border:1px solid var(--line);padding:14px 14px 8px;min-width:0}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart svg text{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+.chart svg text.val{fill:var(--ink);font-weight:700;font-size:11px}
+.chart svg .hit{fill:transparent;cursor:crosshair}
+.chart svg .hit:hover{fill:rgba(29,26,22,.05)}
+.chart .lg{display:flex;gap:14px;font-size:11.5px;color:var(--muted);margin:-2px 0 6px;flex-wrap:wrap}
+.chart .lg span{display:inline-flex;align-items:center;gap:5px}
+.chart .lg i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.chart .cap{font-size:12px;color:var(--muted);margin-top:4px;border-top:1px dashed var(--line);padding-top:6px}
+.mix .row{display:grid;grid-template-columns:110px minmax(0,1fr) 120px;gap:10px;align-items:center;font-size:12.5px;padding:5px 0}
+.mix .row .bar{height:14px;background:var(--line);position:relative}
+.mix .row .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:0 3px 3px 0}
+.mix .row .n{font-family:var(--mono);font-size:12px;text-align:right}
+.mix .row .n em{font-style:normal;color:var(--compute);font-weight:600;margin-left:6px}
+.sig{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sig li{list-style:none;border:1px solid var(--line);padding:12px 14px 12px 46px;position:relative;font-size:13px}
+.sig li>b:first-child{position:absolute;left:14px;top:10px;font-family:var(--serif);font-size:24px;color:var(--red);line-height:1}
+.sig li strong{display:block;font-size:13.5px;margin-bottom:3px}
+.sig li .tag{display:inline-block;font-size:10.5px;font-family:var(--mono);border:1px solid var(--line);color:var(--muted);padding:0 5px;margin:6px 4px 0 0;border-radius:999px}
+.sig li.wide{grid-column:1/-1;background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.sig li.wide strong{color:var(--paper)}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.guide{background:var(--paper);padding:12px 14px;font-size:13px}
+.guide .gv{display:flex;gap:18px;margin:6px 0 4px;flex-wrap:wrap}
+.guide .gv b{font-family:var(--serif);font-size:22px;display:block;line-height:1.1}
+.guide .gv span{font-size:11px;color:var(--muted)}
+.rp details{margin-top:14px;font-size:12.5px}
+.rp details summary{cursor:pointer;color:var(--muted);font-family:var(--mono);font-size:11px}
+.rp table{border-collapse:collapse;width:100%;margin-top:8px;font-family:var(--mono);font-size:11.5px}
+.rp th,.rp td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:right}
+.rp th:first-child,.rp td:first-child{text-align:left}
+.rp .src{font-size:11.5px;color:var(--muted);margin-top:16px;border-top:1px solid var(--line);padding-top:10px}
+.rp .src a{color:var(--muted)}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--paper);font-size:12px;padding:7px 10px;line-height:1.5;z-index:10;display:none;max-width:240px;font-family:var(--sans)}
+#tip b{font-family:var(--mono)}
+#tip .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+@media (max-width:820px){
+  .rp{padding:18px 16px 20px}
+  .rp-hd{grid-template-columns:1fr}.verdict{display:none}
+  .chain{grid-template-columns:1fr}
+  .chain .nd+.nd{border-left:1px solid var(--line);border-top:none}
+  .chain .nd:not(:last-child)::after{right:auto;left:50%;top:auto;bottom:-7px;transform:translateX(-50%) rotate(135deg)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .charts,.duo,.sig{grid-template-columns:1fr}
+  .mix .row{grid-template-columns:84px minmax(0,1fr) 100px}
+}
+
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.week{opacity:0;animation:rise .5s forwards}
+
+@media (max-width:980px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  aside{position:static}
+}
+@media (max-width:720px){
+  .wrap{padding:24px 14px 0}
+  header{grid-template-columns:1fr}
+  .stamp{display:none}
+  .guns{grid-template-columns:1fr}
+  .dow{display:none}
+  .week{display:block}
+  .wk{border-right:none;border-bottom:1px solid var(--line);background:var(--paper2)}
+  .wk b{display:inline;margin-right:6px}
+  .day{border-left:none;min-height:0;border-bottom:1px dashed var(--line)}
+  .day.noev{display:none}
+  .span{position:static;display:block;margin:2px 0}
+  .day.hasspan{padding-top:6px}
+  .day.hasspan .dn{position:static}
+}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{padding:0;background-image:none}
+  .bar,.toggle{display:none}
+  .main{grid-template-columns:minmax(0,1fr) 250px}
+  aside{position:static}
+  #detailCard{display:none}
+  .gun,.week{opacity:1;animation:none}
+  .day{min-height:70px}
+  .day.past{opacity:1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="kicker">Catalyst Calendar · 10/19 – 12/11 · 2026</div>
+      <h1>暴跌之后，<em>哪几发“发令枪”</em><br>能把 AI 重新打上去？</h1>
+      <p class="sub">根据 mark 的文章把 Q3 财报季 + FOMC + GTC 整理成一张日历。点任意事件看文章里提到的看点；斜纹格是作者圈出的三个密集窗口。</p>
+    </div>
+    <div class="stamp">中立 · 无持仓<br>不构成买卖建议<br>“约”日期以公司 IR 为准</div>
+  </header>
+
+  <section class="guns" id="guns"></section>
+
+  <div class="bar" id="filters"><span class="lbl">板块筛选</span></div>
+
+  <div class="main">
+    <div style="min-width:0">
+      <div class="cal" id="cal">
+        <div class="dow"><div>周</div><div>一 MON</div><div>二 TUE</div><div>三 WED</div><div>四 THU</div><div>五 FRI</div></div>
+      </div>
+      <div class="legend">
+        <span><span style="background:var(--cloud);width:14px;height:10px;display:inline-block"></span>实底 = 大盘级事件</span>
+        <span><span class="lg-est"></span>虚线 / ≈ = 预估日期，未官宣</span>
+        <span><span style="color:var(--red)">◆</span>先行指标</span>
+        <span><span class="lg-hot"></span>作者标出的密集窗口</span>
+        <span><span style="display:inline-flex;gap:2px"><i style="width:5px;height:5px;background:var(--red)"></i><i style="width:5px;height:5px;background:var(--red)"></i></span>当日事件数</span>
+      </div>
+      <div class="before">
+        <span class="lbl">已发生 · 暴跌背景</span>
+        <span class="b"><b>10/14</b>9 月 CPI +3.7% 超预期</span>
+        <span class="b"><b>10/15</b>PPI 爆热</span>
+        <span class="b"><b>10/15</b>台积电营收 +41%、上调全年至 ≈+44%，ADR 当天仍 −4.3%</span>
+        <span class="b"><b>那一周</b>VIX 21.4，标普单周 −2%</span>
+      </div>
+    </div>
+
+    <aside>
+      <div class="card" id="detailCard">
+        <h3>事件详情<small>点日历里的任意事件</small></h3>
+        <div id="detail"><p class="empty">先点一下 10/28 —— FOMC、微软、谷歌叠在同一天。</p></div>
+      </div>
+      <div class="card">
+        <h3>只盯三件事</h3>
+        <ul class="watch">
+          <li><b>1</b><div>四大云厂 capex 指引会不会再上调，2027 指引是否奔 1 万亿</div></li>
+          <li><b>2</b><div>英伟达 11/17 能否 beat-and-raise（指引 $1080 亿 ±2%，毛利率 74%）</div></li>
+          <li><b>3</b><div>10/28 FOMC：按兵不动 + Warsh 口风转软？</div></li>
+        </ul>
+        <div class="watch rule">作者的判断：三件里兑现两件，反弹的基本面就扎实；反过来出现云厂砍 capex、英伟达指引平淡、美联储转鹰，就该重新警惕。</div>
+      </div>
+      <div class="card">
+        <h3>拦路虎</h3>
+        <ul class="risk">
+          <li>加息周期：12 月再加 25bp 概率约 63%</li>
+          <li>任一云厂暗示“建得差不多了”= capex 见顶恐慌</li>
+          <li>约 $7500 亿循环融资网（NVDA–OpenAI–ORCL–CRWV）</li>
+          <li>五大厂 2026 capex 首次超过合计经营现金流</li>
+          <li>标普约 20 倍前瞻 PE，科技超配为 2020/8 以来最高</li>
+          <li>预期差：好业绩也可能跌（台积电先例）</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    来源：<a href="https://markcherrypayment.substack.com/" target="_blank">mark ·《暴跌之后, 这波财报季哪些”发令枪”能把 AI 和大盘重新打上去?》</a>。除 AXTI（原文未列，依据公司公告补充）、VICR 财报卡（依据 Vicor 新闻稿和电话会）与 SpaceX 财报卡（原文未列，依据公司新闻稿和 CNBC 报道）外，所有日期、数字与看点均取自原文；标“约”的日期为作者预估，会随公司公告变动。
+  </footer>
+</div>
+<dialog class="rpt" id="rpt" aria-labelledby="rptTitle"></dialog><div id="tip" role="tooltip"></div>
+
+<script>
+const CATS = {
+  macro:  {n:"宏观 / FOMC", c:"var(--macro)"},
+  cloud:  {n:"四大云厂+苹果", c:"var(--cloud)"},
+  compute:{n:"AI 算力核心", c:"var(--compute)"},
+  gtc:    {n:"英伟达 GTC", c:"var(--gtc)"},
+  test:   {n:"测试", c:"var(--test)"},
+  optic:  {n:"光模块", c:"var(--optic)"},
+  mem:    {n:"存储 / HBM", c:"var(--mem)"},
+  cool:   {n:"供电 / 散热", c:"var(--cool)"},
+  power:  {n:"电力 / 核电", c:"var(--power)"},
+  app:    {n:"服务器 / 软件", c:"var(--app)"}
+};
+// d: "MM-DD"; est: 预估; big: 大盘级; lead: 先行指标; t: 时段
+const E = [
+  {d:"10-20",tk:"VICR",nm:"Vicor",cat:"cool",rpt:"VICR",t:"盘前 · 已发布",w:"AI 供电链，本轮最早一批。已交卷：Q3 营收超预期，EPS 与预期接近，毛利率跳升到 68.3%，在手订单 4.06 亿美元。点下面打开财报卡，看它卖什么、钱从哪来、对供电链意味着什么。"},
+  {d:"10-20",tk:"SPCX",nm:"SpaceX",cat:"app",ext:1,rpt:"SPCX",t:"盘后 · 已发布",w:"原文未列，另行补充。火箭、Starlink 卫星上网加 AI 算力出租的组合。Q3 营收同比 +161% 到 145.8 亿美元，AI 第一次成为最大业务；一季资本开支 196 亿，八成多投给 AI 数据中心。点下面打开财报卡。"},
+  {d:"10-21",tk:"META",nm:"Meta",cat:"cloud",big:1,t:"周三盘后",w:"四家里最早发、抢在 FOMC 之前——本轮第一个 AI capex 风向标。看 2026 capex 会不会再上调（现 1300–1450 亿），会不会首次给出很高的 2027 指引。相当于正式财报季前的“情绪预演”。"},
+  {d:"10-27",tk:"TER",nm:"泰瑞达",cat:"test",w:"HBM 和先进封装的测试订单，验证“测试是不是刚需”。"},
+  {d:"10-28",tk:"FOMC",nm:"利率决议",cat:"macro",big:1,t:"14:00 ET 决议 + Warsh 发布会",w:"现利率 3.75%–4.00%（9/16 加息 25bp，2023 年来首次）。市场基准：10 月按兵不动（hold 概率约 66%–84%），12 月再加概率约 63%。偏多情形：不动 + Warsh 口风转软，长端收益率可能再降约 20bp；逆风情形：意外加息，或强硬暗示 12 月必加。它决定财报季的好消息能不能顺畅转化成股价。"},
+  {d:"10-28",tk:"MSFT",nm:"微软",cat:"cloud",big:1,t:"周三盘后 · 已确认",w:"上季 Azure +43% 且加速，RPO 6780 亿；2026 capex 约 1750 亿。盯三样：capex 指引上不上调、云增速守不守得住、backlog 环比涨跌。"},
+  {d:"10-28",tk:"GOOGL",nm:"谷歌",cat:"cloud",big:1,t:"盘后 · 已确认",w:"谷歌云上季 +82%，基数极高，积压 5140 亿；2026 capex 约 1850–2050 亿。增速只要环比稍降就可能被狠卖。"},
+  {d:"10-28",tk:"ADV",nm:"爱德万",cat:"test",w:"HBM / 先进封装测试订单。"},
+  {d:"10-28",tk:"FORM",nm:"FormFactor",cat:"test",w:"HBM / 先进封装测试订单。"},
+  {d:"10-28",tk:"海力士",nm:"SK 海力士",cat:"mem",est:1,lead:1,w:"先行指标。HBM 最纯弹性，是 AI 芯片最卡脖子的内存，涨价和“售罄”指引是需求景气最敏感的温度计。日期暂未官宣。"},
+  {d:"10-28",tk:"VRT",nm:"Vertiv",cat:"cool",lead:1,w:"先行指标。液冷+配电龙头，数据中心建设订单先体现在它的 backlog 上，是 AI 缺电/建设热度风向标。"},
+  {d:"10-28",tk:"GEV",nm:"GE Vernova",cat:"cool",w:"供电设备，AI 缺电主题。"},
+  {d:"10-29",tk:"AMZN",nm:"亚马逊",cat:"cloud",big:1,t:"周四盘后",w:"AWS 上季 +37%，18 个季度最快；2026 capex 约 2200 亿，四家里最高。"},
+  {d:"10-29",tk:"KLAC",nm:"KLA",cat:"test",est:1,w:"测试 / 量检测订单。"},
+  {d:"10-29",tk:"SNDK",nm:"SanDisk",cat:"mem",w:"存储“超级周期”能否延续——上次暴跌里被质疑最多的环节。"},
+  {d:"10-29",tk:"MPWR",nm:"MPS",cat:"cool",est:1,w:"AI 电源管理。"},
+  {d:"10-29",tk:"AXTI",nm:"AXT",cat:"optic",ext:1,t:"盘后 · 已确认 · 电话会 16:30 ET",w:"原文未列，另行补充。磷化铟（InP）衬底供应商，处在光模块激光器的最上游。公司上季给出的 Q3 指引：营收约 6600 万美元（上季 4759 万），EPS 0.30–0.32 美元。",src:"https://www.businesswire.com/news/home/20261001072530/en/AXT-Inc.-Schedules-Third-Quarter-2026-Earnings-Release-for-October-29-2026"},
+  {d:"10-30",tk:"旭创",nm:"中际旭创 (A股)",cat:"optic",w:"1.6T 光模块放量节奏。"},
+  {d:"10-30",tk:"铠侠",nm:"Kioxia",cat:"mem",w:"存储周期指引。"},
+  {d:"10-30",tk:"三星",nm:"Samsung",cat:"mem",est:1,w:"HBM 涨价与存储超级周期。"},
+  {d:"11-02",tk:"AAPL",nm:"苹果",cat:"cloud",t:"周一盘后",w:"大型科技收尾。"},
+  {d:"11-02",tk:"PLTR",nm:"Palantir",cat:"app",est:1,w:"AI 应用变现标杆。"},
+  {d:"11-03",tk:"AMD",nm:"AMD",cat:"compute",big:1,t:"周二盘后",w:"AI GPU 第二极。看 MI450 爬坡，以及 OpenAI 6GW 大单（预计“数百亿美元”收入，给了最多 1.6 亿股认股权证）什么时候、以多大体量兑现。数据中心超预期 = 英伟达前最重要的情绪铺垫。"},
+  {d:"11-03",tk:"ANET",nm:"Arista",cat:"app",w:"AI 以太网。"},
+  {d:"11-03",tk:"TLN",nm:"Talen",cat:"power",w:"AI 数据中心供电缺口转化成的电价和长单。"},
+  {d:"11-04",tk:"ARM",nm:"Arm",cat:"compute",t:"周三盘后 · 已确认",w:"AI 算力核心。"},
+  {d:"11-04",tk:"QCOM",nm:"高通",cat:"compute",est:1,w:"算力核心。"},
+  {d:"11-04",tk:"SMCI",nm:"超微",cat:"compute",est:1,w:"AI 服务器。"},
+  {d:"11-04",tk:"COHR",nm:"Coherent",cat:"optic",w:"1.6T 光模块放量。"},
+  {d:"11-04",tk:"APP",nm:"AppLovin",cat:"app",est:1,w:"AI 应用。"},
+  {d:"11-05",tk:"LITE",nm:"Lumentum",cat:"optic",w:"1.6T 光模块放量。"},
+  {d:"11-05",tk:"AAOI",nm:"AAOI",cat:"optic",w:"光模块。"},
+  {d:"11-06",tk:"VST",nm:"Vistra",cat:"power",w:"电价与长单。"},
+  {d:"11-06",tk:"CEG",nm:"Constellation",cat:"power",est:1,w:"核电长单。"},
+  {d:"11-09",tk:"CRWV",nm:"CoreWeave",cat:"app",est:1,lead:1,w:"先行指标。上次暴跌的风暴眼，backlog 和现金流直接关系到“循环融资”那条暗线会不会缓解。"},
+  {d:"11-16",tk:"OKLO",nm:"Oklo",cat:"power",est:1,w:"核电。"},
+  {d:"11-17",tk:"NVDA",nm:"英伟达",cat:"compute",big:1,s:1,t:"总发令枪",w:"唯一能单凭一己之力让整条 AI 链重新估值的事件。已指引本季营收 1080 亿（±2%）、毛利率 74%，环比约 +12%，且假设对华数据中心收入几乎为零。上季数据中心 890 亿（+117%）。超预期+上调 → 光、存储、测试、供电、电力一起被带起来；指引平淡或毛利率/对华有杂音，杀伤同样是全链条的。"},
+  {d:"12-01",tk:"DELL",nm:"Dell",cat:"app",est:1,w:"AI 服务器。"},
+  {d:"12-02",tk:"HPE",nm:"HPE",cat:"app",est:1,w:"AI 服务器。"},
+  {d:"12-10",tk:"AVGO",nm:"博通",cat:"compute",big:1,est:1,w:"定制 ASIC（谷歌 TPU、Meta、OpenAI）最大赢家，已指引 Q4 AI 收入约 217 亿，同比 +236%。日期未官方确认。"},
+  {d:"12-10",tk:"ORCL",nm:"甲骨文",cat:"app",est:1,w:"AI 云在手合同（RPO）能不能继续爆；也是循环融资网的一环。"}
+];
+const SPANS = [
+  {s:"10-20",e:"10-22",tk:"GTC Berlin",nm:"英伟达欧洲场",cat:"gtc",w:"与财报季开闸、Meta 发财报同几天，是窗口里最早的催化之一。黄仁勋 keynote 常公布新芯片路线图（如 Rubin）、大单和合作。"},
+  {s:"11-30",e:"12-03",tk:"GTC Washington DC",nm:"黄仁勋主题演讲",cat:"gtc",big:1,w:"紧跟 11/17 英伟达财报，是 12 月那波催化的开场，正好能延续财报的情绪。"}
+];
+const HOT = [["10-27","10-30"],["11-03","11-06"],["11-17","11-17"]];
+
+const Y=2026;
+const dt = s => { const [m,d]=s.split("-").map(Number); return new Date(Y,m-1,d); };
+const key = d => String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+// 财报和 FOMC 都按美东时间，“今天”也按美东日期算
+const etParts = new Intl.DateTimeFormat("en-US",{timeZone:"America/New_York",year:"numeric",month:"numeric",day:"numeric"}).formatToParts(new Date());
+const etGet = t => +etParts.find(p=>p.type===t).value;
+const today = new Date(etGet("year"),etGet("month")-1,etGet("day"));
+const daysTo = s => Math.round((dt(s)-today)/864e5);
+const isHot = k => HOT.some(([a,b])=>k>=a&&k<=b);
+const active = new Set(Object.keys(CATS));
+let selected=null;
+
+// guns
+const G=[
+  {d:"10-21",n:"第一枪",t:"Meta 财报",x:"首个 AI capex 风向标，抢在 FOMC 前",id:"META"},
+  {d:"10-28",n:"三重叠加",t:"FOMC + 微软 + 谷歌",x:"利率基调 14:00，AI 需求基调盘后",id:"FOMC"},
+  {d:"11-17",n:"总发令枪",t:"英伟达财报",x:"一拖十：整条 AI 链的重估开关",id:"NVDA",s:1}
+];
+document.getElementById("guns").innerHTML=G.map(g=>{
+  const n=daysTo(g.d); const [m,d]=g.d.split("-").map(Number);
+  const cd = n>0?`<b>${n}</b><span>天后</span>`:n===0?`<b>今</b><span>当天</span>`:`<b>✓</b><span>已过</span>`;
+  return `<div class="gun ${g.s?'s':''}" data-id="${g.id}"><div class="cd">${cd}</div><div class="n">${g.n}</div><div class="d">${m}/${d}</div><div class="t">${g.t}</div><div class="x">${g.x}</div></div>`;
+}).join("");
+document.querySelectorAll(".gun").forEach(el=>el.onclick=()=>select(E.find(e=>e.tk===el.dataset.id)));
+
+// filters
+const f=document.getElementById("filters");
+const allBtn=document.createElement("button"); allBtn.className="chipf all"; allBtn.textContent="全部";
+allBtn.onclick=()=>{Object.keys(CATS).forEach(k=>active.add(k)); render();};
+f.appendChild(allBtn);
+Object.entries(CATS).forEach(([k,v])=>{
+  const b=document.createElement("button"); b.className="chipf"; b.dataset.k=k;
+  b.innerHTML=`<i style="background:${v.c}"></i>${v.n}`;
+  b.onclick=()=>{
+    if(active.size===Object.keys(CATS).length){active.clear();active.add(k);}
+    else if(active.has(k)){active.delete(k); if(!active.size)Object.keys(CATS).forEach(x=>active.add(x));}
+    else active.add(k);
+    render();
+  };
+  f.appendChild(b);
+});
+const tg=document.createElement("label"); tg.className="toggle";
+tg.innerHTML=`<input type="checkbox" id="bigOnly"> 只看大盘级`;
+f.appendChild(tg);
+document.getElementById("bigOnly").onchange=render;
+
+function evHTML(e){
+  const c=CATS[e.cat].c;
+  return `<div class="ev ${e.est?'est':''} ${e.big?'big':''} ${e.lead?'lead':''} ${e.rpt?'done':''} ${selected===e?'sel':''}" style="--c:${c}" data-i="${E.indexOf(e)}" title="${e.nm}"><span class="tk">${e.tk}</span><span class="nm">${e.nm}</span></div>`;
+}
+
+function render(){
+  document.querySelectorAll(".chipf[data-k]").forEach(b=>b.classList.toggle("off",!active.has(b.dataset.k)));
+  const bigOnly=document.getElementById("bigOnly").checked;
+  const vis=e=>active.has(e.cat)&&(!bigOnly||e.big);
+  const cal=document.getElementById("cal");
+  cal.querySelectorAll(".week").forEach(w=>w.remove());
+  const start=dt("10-19"); const weeks=8;
+  for(let w=0;w<weeks;w++){
+    const row=document.createElement("div"); row.className="week"; row.style.animationDelay=(w*0.05)+"s";
+    const mon=new Date(start); mon.setDate(start.getDate()+w*7);
+    const fri=new Date(mon); fri.setDate(mon.getDate()+4);
+    const wkEvents=E.filter(e=>e.d>=key(mon)&&e.d<=key(fri)&&vis(e)).length;
+    const hotWk = HOT.some(([a,b])=>a<=key(fri)&&b>=key(mon));
+    row.innerHTML=`<div class="wk"><b>${mon.getMonth()+1}/${mon.getDate()}</b>${wkEvents} 个事件${hotWk?'<br><span class="tag">密集</span>':''}</div>`;
+    const cells=[];
+    for(let i=0;i<5;i++){
+      const d=new Date(mon); d.setDate(mon.getDate()+i); const k=key(d);
+      const evs=E.filter(e=>e.d===k&&vis(e)).sort((a,b)=>(b.s||0)-(a.s||0)||(b.big||0)-(a.big||0)||(b.lead||0)-(a.lead||0));
+      const cell=document.createElement("div");
+      cell.className="day"+(isHot(k)?" hot":"")+(d<today?" past":"")+(+d===+today?" today":"")+(d.getDate()===1?" mon1":"");
+      const label = d.getDate()===1?`<b>${d.getMonth()+1}月</b> 1`:(d.getMonth()+1)+"/"+d.getDate();
+      cell.innerHTML=`<div class="dn"><span>${label}</span><span class="heat">${evs.map(()=>'<i></i>').join("")}</span></div>`+evs.map(evHTML).join("");
+      cell.dataset.k=k; cells.push(cell); row.appendChild(cell);
+    }
+    // spans
+    let has=false;
+    SPANS.forEach((s,si)=>{
+      if(!active.has(s.cat)||(bigOnly&&!s.big))return;
+      const idx=cells.map(c=>c.dataset.k).map(k=>k>=s.s&&k<=s.e);
+      const a=idx.indexOf(true); if(a<0)return; const b=idx.lastIndexOf(true);
+      has=true;
+      cells.slice(a,b+1).forEach(c=>c.classList.add("hasspan"));
+      const sp=document.createElement("div"); sp.className="span"; sp.style.setProperty("--c",CATS[s.cat].c);
+      sp.style.left=`calc(64px + (100% - 64px) * ${a}/5 + 4px)`;
+      sp.style.width=`calc((100% - 64px) * ${b-a+1}/5 - 8px)`;
+      sp.textContent=`${s.tk} · ${s.s.replace("-","/")}–${s.e.replace("-","/")}`;
+      sp.onclick=()=>select(s);
+      if(window.matchMedia("(max-width:720px)").matches){ cells[a].querySelector(".dn").after(sp); cells[a].classList.remove("noev"); }
+      else row.appendChild(sp);
+    });
+    cells.forEach(c=>{ if(!c.querySelector(".ev")&&!c.querySelector(".span")) c.classList.add("noev"); });
+    cal.appendChild(row);
+  }
+  cal.querySelectorAll(".ev").forEach(el=>el.onclick=()=>select(E[+el.dataset.i]));
+}
+
+function select(e,quiet){
+  selected=e;
+  const c=CATS[e.cat];
+  const dateTxt = e.s ? `${e.s.replace("-","/")} – ${e.e.replace("-","/")}` : e.d.replace("-","/");
+  const ref = e.s||e.d; const n=daysTo(ref);
+  const cdTxt = n>0?`还有 ${n} 天`:n===0?"就是今天":`${-n} 天前`;
+  const same = e.d?E.filter(x=>x.d===e.d&&x!==e):[];
+  document.getElementById("detail").innerHTML=`
+    <div class="when">${dateTxt} · ${cdTxt}${e.t?" · "+e.t:""}</div>
+    <div class="big">${e.nm}${e.tk!==e.nm?` <span style="font-family:var(--mono);font-size:14px;color:var(--muted)">${e.tk}</span>`:""}</div>
+    <span class="pill" style="background:${c.c}">${c.n}</span>${e.big?'<span class="flag">大盘级</span>':''}${e.lead?'<span class="flag" style="color:var(--red)">◆ 先行指标</span>':''}${e.est?'<span class="flag">日期为预估</span>':''}${e.ext?'<span class="flag">原文未列 · 补充</span>':''}${isHot(ref)?'<span class="flag">密集窗口</span>':''}
+    <p>${e.w}</p>
+    ${e.rpt?rptTeaser(REPORTS[e.rpt]):""}
+    ${e.src?`<p style="font-size:12px"><a href="${e.src}" target="_blank" style="color:var(--muted)">公司公告 ↗</a></p>`:""}
+    ${same.length?`<div class="sameday">同一天还有 ${same.length} 个：<br>${same.map(x=>`<span data-i="${E.indexOf(x)}">${x.tk}</span>`).join("")}</div>`:""}`;
+  document.querySelectorAll("#detail .sameday span").forEach(s=>s.onclick=()=>select(E[+s.dataset.i]));
+  const rb=document.querySelector("#detail .rptbtn"); if(rb) rb.onclick=()=>openReport(e.rpt);
+  render();
+  if(e.rpt&&!quiet){ openReport(e.rpt); return; }
+  if(!quiet&&window.innerWidth<=980) document.getElementById("detailCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+// ===== 财报卡：数据取自公司 8-K 新闻稿与 Q3 电话会 =====
+const REPORTS = {
+  VICR:{
+    tk:"VICR", nm:"Vicor", cn:"维科", q:"Q3 2026", date:"10/20 盘前",
+    lede:"Vicor 做电源模块：把机柜里的电一步步降压，最后在 AI 芯片正下方变成芯片需要的“低电压、大电流”。这一季营收同比 +78.5%，毛利率一季跳升 10 个点，专利授权收入翻了一倍多。",
+    plain:[
+      ["先打个比方","把电想成水：电压是水压，电流是水量。AI 芯片要的是“极低水压、超大水量”，不到 1 伏的电压、上千安培的电流。大电流走远路会在线路上白白发热，所以要先用高电压把电送到芯片附近，越靠近芯片再越往下降。"],
+      ["Brick 砖块电源","火柴盒大小的电源块，装在服务器主板上，把机柜送来的 48V 降到 12V 左右。老业务，这季收入 5830 万美元。"],
+      ["VPD 垂直供电模块","薄片状，直接贴在芯片背面正下方，做最后一步：把电压降到 1V 以下、电流放大几十倍。离芯片最近，路上浪费最少。这是 AI 需求拉动的主角。"],
+      ["专利授权","别家做类似的垂直供电方案，用到 Vicor 的专利，就要交专利费。这季专利费 6660 万美元，占营收三分之一。"]
+    ],
+    // 先进产品 = 含授权收入；72.3 = 138.9 − 66.6
+    chain:[
+      {b:"48V",i:"机柜电源",t:"电从机柜送进服务器"},
+      {b:"48V → 12V",i:"第一次降压",t:"Brick 砖块电源",v:"Brick"},
+      {b:"主板走线",i:"传统做法",t:"在芯片四周摆一圈小稳压器（VR）再降一次"},
+      {b:"< 1V · 上千安培",i:"最后一步",t:"VPD 模块贴在芯片正下方",v:"VPD"},
+      {b:"AI 芯片",i:"GPU / 定制芯片",t:"功耗越大，最后这一步越难"}
+    ],
+    kpi:[
+      {l:"营收",v:"$1.971",u:"亿",d:'<span class="up">▲ 78.5%</span> 同比 · <span class="vs">预期 $1.84–1.87 亿</span>'},
+      {l:"毛利率",v:"68.3",u:"%",d:'<span class="up">▲ 10.3pt</span> 环比 · <span class="vs">上季 58.0%</span>'},
+      {l:"摊薄 EPS",v:"$1.33",u:"",d:'<span class="up">▲ 111%</span> 同比 · <span class="vs">预期 $1.29–1.39</span>'},
+      {l:"在手订单（1 年）",v:"$4.06",u:"亿",d:'<span class="up">▲ 166%</span> 同比 · <span class="vs">≈ 2 个季度营收</span>'}
+    ],
+    // 单位：百万美元
+    Q:[
+      {q:"Q3'25",p:88.7,r:21.7,bl:153,gm:57.5},
+      {q:"Q4'25",p:92.7,r:14.5,bl:176.9,gm:55.4},
+      {q:"Q1'26",p:98.0,r:15.0,bl:301,gm:55.2},
+      {q:"Q2'26",p:112.9,r:30.4,bl:380,gm:58.0},
+      {q:"Q3'26",p:130.5,r:66.6,bl:406,gm:68.3},
+      {q:"Q4'26E",p:143.6,r:43,guide:1}
+    ],
+    mix:[
+      {n:"先进产品",s:"VPD 等高密度模块（不含授权）",v:72.3},
+      {n:"专利授权",s:"别家用专利交的钱",v:66.6,g:"+119% 环比"},
+      {n:"Brick 砖块",s:"48V → 12V 电源块",v:58.3,g:"+18% 环比"}
+    ],
+    sig:[
+      {h:"AI 供电的难点在芯片旁边的最后一步",t:"今年 OCP 大会（数据中心硬件行业大会）讨论的焦点是用 800V 直流把电送进机柜。但 Vicor 管理层认为，真正卡住 AI 的是芯片旁边最后一步降压：传统稳压器（VR）占地方，又给不了足够大的电流。公司称二代 VPD 的电流密度是传统 VR 的 3 倍，能让 AI 芯片的供电损耗少 10–15%（这是公司自己的说法）。",tg:["芯片功耗↑","供电方案换代"]},
+      {h:"需求：订单比出货跑得快",t:"一年内要交货的订单从 1.53 亿美元涨到 4.06 亿（2.6 倍）；Q4 头两周又接了约 1 亿订单，里面有头号客户的二代 VPD 大单。CEO 说，一位大客户预计需求“未来几年每年翻倍”。",tg:["AI 投资传导到电源","能见度高"]},
+      {h:"工厂快满了，开始扩厂",t:"现在唯一的工厂 Fab-1 已接近满负荷，部分工序已经是瓶颈。新买了两块地，Fab-2 计划 2027 年二季度开始装设备，加上 Fab-3 总产能可到现在的 5 倍以上，公司说不用融资、靠自己的现金就够。",tg:["供不应求","扩产执行"]},
+      {h:"专利开始收钱",t:"第一份 VPD 专利授权签给了一家 AI 服务器厂商，另有两家大型云厂来询价“打包授权”。美国国际贸易委员会（ITC）已对侵犯 VPD 专利立案调查，最严重可以禁止侵权产品进口；Vicor 的费率分四档、越晚签越贵。专利费几乎没有生产成本（但律师费约占专利费的 20%），这是毛利率一季跳 10 个点的主要原因之一。",tg:["垂直供电绕不开专利","高毛利"]},
+      {h:"顺带一条：为什么会提到“测试”",t:"每颗 AI 芯片和 HBM 内存出厂前，都要放进专门的测试机通电跑一遍，测试机也要用大电流电源。管理层说，做 ASIC（定制芯片）和存储芯片测试机的客户（ATE，自动测试设备）现在每年给 Vicor 贡献超过 1 亿美元收入，“没有放缓迹象”。公司没点名是哪几家，但日历里 10/27–10/29 发财报的泰瑞达、爱德万（做测试机）和 FormFactor（做测试探针卡）就在这个赛道，可以对照着看：AI 芯片越多，要测的芯片也越多。",tg:["HBM 测试","芯片测试设备"],wide:1}
+    ],
+    guide:{p:"≈ +10%",r:"≥ $4300 万",tot:"≈ $1.87 亿",note:"产品营收环比约 +10%（先进产品再两位数增长）；专利费即使不签新协议也不少于 4300 万。Q3 的专利费里有一部分是新客户补交的一次性款项，所以按指引推算，Q4 总营收可能比 Q3 低约 5%，主要原因是这笔一次性款项不会再有。"},
+    risk:[
+      "授权收入波动大：Q3 含一次性追溯补缴，季度之间可能大起大落",
+      "法律费用随诉讼走高，管理层预计约为授权收入的 20%",
+      "高度依赖 AI 资本开支；头号客户集中",
+      "与传统 VR / 集成稳压 IVR 路线的竞争，VPD 在头号客户以外的普及“仍在早期”",
+      "扩厂执行风险，以及产能到位前接单受限"
+    ],
+    src:[
+      ["Q3 2026 新闻稿（SEC 8-K）","https://www.sec.gov/Archives/edgar/data/0000751978/000119312526425697/d153882dex991.htm"],
+      ["Q2 2026 新闻稿","https://www.sec.gov/Archives/edgar/data/0000751978/000119312526309538/d115827dex991.htm"],
+      ["Q1 2026 新闻稿","https://www.sec.gov/Archives/edgar/data/0000751978/000119312526165105/d139425dex991.htm"],
+      ["Q4 2025 新闻稿","https://www.sec.gov/Archives/edgar/data/751978/000119312526059563/d240534dex991.htm"],
+      ["Q3 电话会纪要（TradingKey）","https://www.tradingkey.com/news/transcripts/262226720-tradingkey"],
+      ["分析师预期（Tickeron 汇总 Investing.com / Zacks）","https://tickeron.com/blogs/vicor-corporation-vicr-q3-earnings-preview-watching-ai-licensing-momentum-build-19794/"]
+    ]
+  }
+};
+const C_PROD="#2b6cb0", C_ROY="#c8361d", C_INK="#3d4f5c";
+const fm = v => (v/100).toFixed(2);
+
+// ===== SpaceX 财报卡：数据取自公司 Q3 2026 新闻稿（SEC 8-K 附件 99.1），预期与电话会内容取自 CNBC =====
+const C_SPACE="#3d4f5c", C_CONN="#2b6cb0", C_SI="#c8361d";
+const yi = v => (v/100).toFixed(1); // 百万美元 → 亿美元
+REPORTS.SPCX = {
+  tk:"SPCX", nm:"SpaceX", cn:"太空探索", q:"Q3 2026", date:"10/20 盘后",
+  teaser:[["$145.8亿","营收 ▲161%"],["$75.6亿","AI 收入"],["$195.9亿","资本开支"]],
+  lede:"SpaceX 现在做三门生意：火箭发射、Starlink 卫星上网，以及并入 xAI 之后的 AI 业务。这一季营收同比 +161%，到 145.8 亿美元；AI 第一次成为最大的业务，也第一次赚钱。但一季砸下 196 亿美元建数据中心，花钱仍比赚钱快。",
+  plain:[
+    ["先说结论","SpaceX 已经不只是火箭公司。这一季每收入 100 美元，约 52 美元来自 AI，36 美元来自 Starlink，只有 12 美元来自火箭。"],
+    ["太空 · 火箭","用猎鹰 9 号和星舰把卫星、货物、宇航员送上太空，客户有 NASA、美国军方和商业公司。这季 35 次发射里，23 次是给自己送 Starlink 卫星。"],
+    ["连接 · Starlink","几千颗低轨卫星组成的上网网络，偏远地区、飞机、轮船都能用，按月收费。这是公司最稳定、最赚钱的部分。"],
+    ["超级智能 · AI","原来的 xAI，公司现在叫它“超级智能”（SI）。最大一块收入是把数据中心的 GPU 算力租给别的 AI 公司，另外还有 Grok 聊天机器人、编程工具 Cursor 和 X 的广告。"]
+  ],
+  kpi:[
+    {l:"营收",v:"$145.8",u:"亿",d:'<span class="up">▲ 161%</span> 同比 · <span class="vs">预期 $127.2 亿</span>'},
+    {l:"经营利润",v:"$27.9",u:"亿",d:'<span class="up">扭亏</span> · <span class="vs">去年同期亏 $2.7 亿</span>'},
+    {l:"调整后 EPS",v:"$0.45",u:"",d:'<span class="vs">预期 $0.13 · 按会计准则 $0.35</span>'},
+    {l:"资本开支",v:"$195.9",u:"亿",d:'<span class="vs">其中 AI 占 $164.4 亿（84%）</span>'}
+  ],
+  // 单位：百万美元；Q1'26 = 九个月合计 − Q2 − Q3
+  Q:[
+    {q:"Q3'25",s:1666,c:3097,a:813,op:-273},
+    {q:"Q1'26",s:619,c:3257,a:818,op:-1943,derived:1},
+    {q:"Q2'26",s:962,c:4291,a:2561,op:-143},
+    {q:"Q3'26",s:1767,c:5248,a:7560,op:2791}
+  ],
+  // Q3'26 分业务：收入 / 经营利润 / 资本开支
+  seg:[
+    {n:"超级智能 · AI",c:C_SI,rev:7560,op:431,cap:16444},
+    {n:"连接 · Starlink",c:C_CONN,rev:5248,op:2367,cap:1543},
+    {n:"太空 · 火箭",c:C_SPACE,rev:1767,op:-7,cap:1606}
+  ],
+  sig:[
+    {h:"AI 成了最大的业务，主要靠“出租算力”",t:"AI 这季收入 75.6 亿美元，是上季的 3 倍、去年同期的 9 倍多。其中 70.2 亿来自算力和 AI 服务：把自家数据中心的 GPU 算力租给别的 AI 公司（CNBC 报道的客户有 Google、Anthropic），再加上 Grok 和 8 月并入的编程工具 Cursor（并入后贡献 6.08 亿）。X 的广告只有 5.4 亿。",tg:["算力出租","AI 云"]},
+    {h:"一季砸 196 亿美元建数据中心",t:"资本开支 195.9 亿美元，其中 164.4 亿投给 AI。数据中心总算力从 6 月底的 1.4GW 扩到 1.7GW（1GW 大约是一座大型核电机组的发电能力）。这些钱最后会变成 GPU、服务器、电源、液冷和电力设备的订单。",tg:["AI 资本开支","GPU / 电力需求"]},
+    {h:"真正赚钱的还是 Starlink",t:"Starlink 所在的“连接”业务经营利润 23.7 亿，占全公司 27.9 亿的 85%。个人用户 1360 万，一年前是 720 万；每户每月平均付 69 美元，比上季的 66 美元回升，但低于一年前的 83 美元。据 technology.org 报道，这季新增 160 万用户，少于分析师预期的 229 万。",tg:["现金牛","用户增速放缓"]},
+    {h:"火箭基本打平，星舰开始赚钱",t:"火箭业务收入 17.7 亿，同比只增 6%，经营亏损 700 万美元，主要因为星舰研发投入大。9 月的星舰第 14 次飞行第一次进入轨道，也第一次带来收入：一次送上 26 颗新一代 Starlink 卫星，增加的网络容量约是猎鹰 9 号一次发射的 10 倍。",tg:["星舰","研发投入"]},
+    {h:"对日历上其他公司意味着什么",t:"SpaceX 现在既是 AI 算力的大买家，也是出租方。一方面，它一季投 164 亿美元建 AI 设施，CNBC 报道电话会上说每月要上线 20 万套英伟达 Grace Blackwell 系统。这类订单流向 11/17 的英伟达，也流向供电散热（Vertiv、GE Vernova、Vicor）和电力（Vistra、Constellation、Talen）。另一方面，它出租算力的生意和 11/9 的 CoreWeave 是同一类。CNBC 提到这类公司 10 月股价普遍大跌，市场担心利率上升让烧钱建设更吃力。",tg:["AI capex 传导","算力出租同行"],wide:1}
+  ],
+  guide:{v:"$330–370 亿",l:"2027 年一季度营收（CFO 电话会）",note:"据 CNBC，CFO 在电话会上给出这个范围，分析师原本平均预期 222 亿；他把原因归于“未来六个月算力合同的能见度提高”。公司新闻稿里没有写这个指引，报道里也没提 Q4 的指引。马斯克还说，到 2027 年底年化收入可达 5000 亿到 1 万亿美元。这是他本人的说法，远高于分析师对 2027 全年约 1100 亿的预期。"},
+  risk:[
+    "净利润 44 亿里约 14 亿不是经营赚的：利息和其他收益 10.3 亿、税收收益 3.9 亿；看经营利润 27.9 亿更准",
+    "花钱比赚钱快：一季资本开支 195.9 亿，调整后 EBITDA 88.1 亿；有息负债约 388 亿，账上现金和有价证券约 899 亿",
+    "AI 收入集中在少数大客户的算力合同上，续约和价格是关键",
+    "收购 Cursor：本季已计入 12.2 亿股权激励费用，之后还有约 234 亿要在员工服务期内分摊",
+    "争议：孟菲斯数据中心燃气轮机污染诉讼继续审理；Starshield 在乌克兰限速的争议",
+    "与特斯拉合并：两家董事会已成立独立委员会讨论，马斯克说他认为是好主意，但还没有任何决定"
+  ],
+  src:[
+    ["Q3 2026 新闻稿（SEC 8-K）","https://www.sec.gov/Archives/edgar/data/1181412/000162828026066482/spaceexplorationtechnologi.htm"],
+    ["CNBC 财报直播（预期、指引、电话会）","https://www.cnbc.com/2026/10/20/spacex-spcx-earnings-live-updates-q3-2026html.html"],
+    ["technology.org（用户新增预期）","https://www.technology.org/2026/10/21/spacex-q3-2026-earnings-super-intelligence-revenue/"]
+  ],
+  render:R=>spcxHTML(R)
+};
+
+function spcxRevChart(Q){
+  const W=460,H=230,L=34,B=24,T=18,max=16000,bw=34;
+  const ih=H-B-T, step=(W-L)/Q.length, y=v=>T+ih-(v/max)*ih;
+  let g="";
+  [0,4000,8000,12000,16000].forEach(t=>{ g+=`<line x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="#e6ddcc"/><text x="${L-6}" y="${y(t)+3.5}" text-anchor="end">${t/100}</text>`; });
+  Q.forEach((d,i)=>{
+    const cx=L+step*i+step/2, x=cx-bw/2, tot=d.s+d.c+d.a;
+    let base=0;
+    [[d.s,C_SPACE],[d.c,C_CONN],[d.a,C_SI]].forEach(([v,c],k)=>{
+      const h=(v/max)*ih;
+      g+= k===2 ? `<path d="${colPath(x,y(base+v),bw,h)}" fill="${c}"/>` : `<rect x="${x}" y="${y(base+v)}" width="${bw}" height="${h}" fill="${c}"/>`;
+      base+=v;
+    });
+    g+=`<text class="val" x="${cx}" y="${y(tot)-6}" text-anchor="middle">${yi(tot)}</text>`;
+    g+=`<text x="${cx}" y="${H-6}" text-anchor="middle"${i===Q.length-1?' style="fill:#1d1a16;font-weight:700"':''}>${d.q}${d.derived?'*':''}</text>`;
+    const tip=`<b>${d.q}</b> 合计 $${yi(tot)} 亿<br><span class="sw" style="background:${C_SI}"></span>AI $${yi(d.a)} 亿（${(d.a/tot*100).toFixed(0)}%）<br><span class="sw" style="background:${C_CONN}"></span>Starlink $${yi(d.c)} 亿<br><span class="sw" style="background:${C_SPACE}"></span>火箭 $${yi(d.s)} 亿<br>经营利润 ${d.op<0?'−':''}$${yi(Math.abs(d.op))} 亿`;
+    g+=`<rect class="hit" x="${cx-step/2}" y="${T}" width="${step}" height="${ih}" data-tip="${encodeURIComponent(tip)}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="SpaceX 季度营收，按业务堆叠，单位亿美元">${g}</svg>`;
+}
+
+function spcxSegRows(seg){
+  const max=Math.max(...seg.map(s=>Math.max(s.rev,s.cap)));
+  const bar=(v,c,lbl)=>`<div class="sb"><span>${lbl}</span><div class="bar"><i style="width:${Math.max(Math.abs(v)/max*100,0.6)}%;background:${c}${v<0?';opacity:.4':''}"></i></div><em>${v<0?'−':''}${yi(Math.abs(v))}</em></div>`;
+  return seg.map(s=>`<div class="segrow"><b style="color:${s.c}">${s.n}</b>${bar(s.rev,s.c,"收入")}${bar(s.op,s.c,"经营利润")}${bar(s.cap,"#9a8f80","资本开支")}</div>`).join("");
+}
+
+function spcxHTML(R){
+  return `<div class="rp">
+    <button class="x" aria-label="关闭" onclick="document.getElementById('rpt').close()">×</button>
+    <div class="rp-hd">
+      <div>
+        <div class="kicker">已出财报 · ${R.q} · ${R.date} · 卫星上网 / AI 算力</div>
+        <h2 id="rptTitle">${R.nm} ${R.cn}<small>${R.tk}</small></h2>
+        <p class="lede">${R.lede}</p>
+      </div>
+      <div class="verdict">营收<b>大超预期</b>盘后涨约 8%</div>
+    </div>
+    <section>
+      <h4>它做什么：普通人版<small>先看懂三门生意，再看数字</small></h4>
+      <div class="plain">${R.plain.map(([h,t])=>`<div><b>${h}</b>${t}</div>`).join("")}</div>
+    </section>
+    <section><div class="kpis">${R.kpi.map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}<small>${k.u}</small></div><div class="d">${k.d}</div></div>`).join("")}</div></section>
+    <section class="charts">
+      <div class="chart">
+        <h4>季度营收<small>亿美元 · 悬停看明细</small></h4>
+        <div class="lg"><span><i style="background:${C_SI}"></i>超级智能 · AI</span><span><i style="background:${C_CONN}"></i>连接 · Starlink</span><span><i style="background:${C_SPACE}"></i>太空 · 火箭</span></div>
+        ${spcxRevChart(R.Q)}
+        <div class="cap">一年里季度收入从 55.8 亿涨到 145.8 亿，多出来的钱有四分之三来自 AI（红色）。图中跳过了 Q4'25：这份新闻稿没有给出那一季的分业务数据。</div>
+      </div>
+      <div class="chart">
+        <h4>Q3 钱从哪来、利润在哪、钱花在哪<small>亿美元</small></h4>
+        ${spcxSegRows(R.seg)}
+        <div class="cap">AI 收入最多，但花掉的钱是它收入的两倍多；利润几乎都来自 Starlink。</div>
+      </div>
+    </section>
+    <section>
+      <h4>这张财报说明产业链在发生什么</h4>
+      <ul class="sig">${R.sig.map((s,i)=>`<li class="${s.wide?'wide':''}"><b>${i+1}</b><strong>${s.h}</strong>${s.t}<br>${s.tg.map(t=>`<span class="tag">${t}</span>`).join("")}</li>`).join("")}</ul>
+    </section>
+    <section class="duo">
+      <div class="guide">
+        <h4>业绩指引</h4>
+        <div class="gv"><div><b>${R.guide.v}</b><span>${R.guide.l}</span></div></div>
+        <div style="color:var(--muted);font-size:12.5px">${R.guide.note}</div>
+      </div>
+      <div>
+        <h4>要留意的</h4>
+        <ul class="risk">${R.risk.map(r=>`<li>${r}</li>`).join("")}</ul>
+      </div>
+    </section>
+    <details><summary>查看数据表</summary>
+      <table><thead><tr><th>季度</th><th>火箭</th><th>Starlink</th><th>AI</th><th>合计</th><th>经营利润</th></tr></thead>
+      <tbody>${R.Q.map(d=>`<tr><td>${d.q}${d.derived?'*':''}</td><td>${yi(d.s)}</td><td>${yi(d.c)}</td><td>${yi(d.a)}</td><td>${yi(d.s+d.c+d.a)}</td><td>${d.op<0?'−':''}${yi(Math.abs(d.op))}</td></tr>`).join("")}</tbody></table>
+      <p style="color:var(--muted);margin-top:6px">单位亿美元。* Q1'26 由新闻稿里的九个月合计减去 Q2、Q3 算出。营收预期和调整后 EPS 预期来自 LSEG（经 CNBC）；新闻稿里的按会计准则摊薄 EPS 是 $0.35。</p>
+    </details>
+    <div class="src">来源：${R.src.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ")}。中立 · 无持仓 · 不构成买卖建议。</div>
+  </div>`;
+}
+
+function rptTeaser(R){
+  if(R.teaser) return `<div class="mini">${R.teaser.map(([v,l])=>`<div><b>${v}</b><span>${l}</span></div>`).join("")}</div><button class="rptbtn">打开 ${R.q} 财报卡 <span>→</span></button>`;
+  const last=R.Q.filter(q=>!q.guide).at(-1);
+  return `<div class="mini">
+    <div><b>$${fm(last.p+last.r)}亿</b><span>营收 ▲78.5%</span></div>
+    <div><b>${last.gm}%</b><span>毛利率</span></div>
+    <div><b>$${fm(last.bl)}亿</b><span>在手订单</span></div>
+  </div><button class="rptbtn">打开 ${R.q} 财报卡 <span>→</span></button>`;
+}
+
+// 圆角柱顶、底部直角
+const colPath=(x,y,w,h,r=4)=>{ r=Math.min(r,h); return `M${x},${y+h}V${y+r}Q${x},${y} ${x+r},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h}Z`; };
+
+function revChart(Q){
+  const W=460,H=230,L=34,B=24,T=18,max=200,bw=24;
+  const ih=H-B-T, step=(W-L)/Q.length, y=v=>T+ih-(v/max)*ih;
+  const hatch=(id,c)=>`<pattern id="${id}" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#fffdf8"/><rect width="2.5" height="6" fill="${c}"/></pattern>`;
+  let g=`<defs>${hatch("hP",C_PROD)}${hatch("hR",C_ROY)}</defs>`;
+  [0,50,100,150,200].forEach(t=>{ g+=`<line x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="#e6ddcc" stroke-width="1"/><text x="${L-6}" y="${y(t)+3.5}" text-anchor="end">${t}</text>`; });
+  Q.forEach((d,i)=>{
+    const cx=L+step*i+step/2, x=cx-bw/2, tot=d.p+d.r;
+    const hp=(d.p/max)*ih, hr=(d.r/max)*ih-2;
+    const op=d.guide?' opacity=".55"':'';
+    g+=`<rect x="${x}" y="${y(d.p)}" width="${bw}" height="${hp}" fill="${d.guide?'url(#hP)':C_PROD}"${op}/>`;
+    g+=`<path d="${colPath(x,y(tot),bw,hr)}" fill="${d.guide?'url(#hR)':C_ROY}"${op}/>`;
+    g+=`<text class="val" x="${cx}" y="${y(tot)-6}" text-anchor="middle">${d.guide?'≈':''}${tot.toFixed(0)}</text>`;
+    g+=`<text x="${cx}" y="${H-6}" text-anchor="middle"${i===Q.length-2?' style="fill:#1d1a16;font-weight:700"':''}>${d.q}</text>`;
+    const tip=d.guide?`<b>${d.q} 公司指引</b><br><span class="sw" style="background:${C_PROD}"></span>产品 ≈ $${d.p.toFixed(1)}M（环比 +10%）<br><span class="sw" style="background:${C_ROY}"></span>授权 ≥ $${d.r}M<br>合计 ≈ $${tot.toFixed(0)}M+（推算）`
+      :`<b>${d.q}</b> 合计 $${tot.toFixed(1)}M<br><span class="sw" style="background:${C_PROD}"></span>产品 $${d.p.toFixed(1)}M<br><span class="sw" style="background:${C_ROY}"></span>授权 $${d.r.toFixed(1)}M（占 ${(d.r/tot*100).toFixed(0)}%）`;
+    g+=`<rect class="hit" x="${cx-step/2}" y="${T}" width="${step}" height="${ih}" data-tip="${encodeURIComponent(tip)}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Vicor 季度营收，产品与授权堆叠，单位百万美元">${g}</svg>`;
+}
+
+function blChart(Q){
+  const D=Q.filter(q=>!q.guide), W=380,H=150,L=34,B=22,T=16,max=450,bw=24;
+  const ih=H-B-T, step=(W-L)/D.length, y=v=>T+ih-(v/max)*ih;
+  let g="";
+  [0,150,300,450].forEach(t=>{ g+=`<line x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="#e6ddcc"/><text x="${L-6}" y="${y(t)+3.5}" text-anchor="end">${t}</text>`; });
+  D.forEach((d,i)=>{
+    const cx=L+step*i+step/2;
+    g+=`<path d="${colPath(cx-bw/2,y(d.bl),bw,(d.bl/max)*ih)}" fill="${C_INK}"/>`;
+    if(i===0||i===D.length-1) g+=`<text class="val" x="${cx}" y="${y(d.bl)-6}" text-anchor="middle">${d.bl.toFixed(0)}</text>`;
+    g+=`<text x="${cx}" y="${H-5}" text-anchor="middle">${d.q}</text>`;
+    const qoq=i?((d.bl/D[i-1].bl-1)*100).toFixed(0):null;
+    g+=`<rect class="hit" x="${cx-step/2}" y="${T}" width="${step}" height="${ih}" data-tip="${encodeURIComponent(`<b>${d.q}</b> 在手订单 $${d.bl}M`+(qoq!==null?`<br>环比 ${qoq>0?'+':''}${qoq}%`:''))}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Vicor 一年期在手订单，单位百万美元">${g}</svg>`;
+}
+
+function gmChart(Q){
+  const D=Q.filter(q=>!q.guide), W=380,H=110,L=34,B=20,T=16,lo=50,hi=70;
+  const ih=H-B-T, step=(W-L)/D.length, y=v=>T+ih-((v-lo)/(hi-lo))*ih, X=i=>L+step*i+step/2;
+  let g="";
+  [50,60,70].forEach(t=>{ g+=`<line x1="${L}" x2="${W}" y1="${y(t)}" y2="${y(t)}" stroke="#e6ddcc"/><text x="${L-6}" y="${y(t)+3.5}" text-anchor="end">${t}%</text>`; });
+  g+=`<polyline points="${D.map((d,i)=>`${X(i)},${y(d.gm)}`).join(" ")}" fill="none" stroke="#1d1a16" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  D.forEach((d,i)=>{
+    g+=`<circle cx="${X(i)}" cy="${y(d.gm)}" r="4.5" fill="#1d1a16" stroke="#fffdf8" stroke-width="2"/>`;
+    if(i===D.length-1) g+=`<text class="val" x="${X(i)-10}" y="${y(d.gm)+4}" text-anchor="end">${d.gm}%</text>`;
+    g+=`<text x="${X(i)}" y="${H-4}" text-anchor="middle">${d.q}</text>`;
+    g+=`<rect class="hit" x="${X(i)-step/2}" y="${T-6}" width="${step}" height="${ih+12}" data-tip="${encodeURIComponent(`<b>${d.q}</b> 毛利率 ${d.gm}%`)}"/>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Vicor 季度毛利率">${g}</svg>`;
+}
+
+function openReport(id){
+  const R=REPORTS[id], dlg=document.getElementById("rpt");
+  if(R.render) dlg.innerHTML=R.render(R); else vicrHTML(R,dlg);
+  if(!dlg.open) dlg.showModal();
+  dlg.scrollTop=0;
+}
+
+function vicrHTML(R,dlg){
+  const mixMax=Math.max(...R.mix.map(m=>m.v)), mixTot=R.mix.reduce((a,m)=>a+m.v,0);
+  dlg.innerHTML=`<div class="rp">
+    <button class="x" aria-label="关闭" onclick="document.getElementById('rpt').close()">×</button>
+    <div class="rp-hd">
+      <div>
+        <div class="kicker">已出财报 · ${R.q} · ${R.date} · AI 供电链</div>
+        <h2 id="rptTitle">${R.nm} ${R.cn}<small>${R.tk}</small></h2>
+        <p class="lede">${R.lede}</p>
+      </div>
+      <div class="verdict">营收<b>超预期</b>EPS 与预期接近</div>
+    </div>
+    <section>
+      <h4>它卖什么：普通人版<small>先看懂产品，再看数字</small></h4>
+      <div class="plain">${R.plain.map(([h,t])=>`<div><b>${h}</b>${t}</div>`).join("")}</div>
+      <h4 style="margin-top:14px">电从机柜走到芯片的几步<small>黑底 = Vicor 的位置</small></h4>
+      <div class="chain">${R.chain.map(n=>`<div class="nd ${n.v?'v':''}">${n.v?`<em>Vicor · ${n.v}</em>`:''}<b>${n.b}</b><i>${n.i}</i>${n.t}</div>`).join("")}</div>
+      <p class="chain-note">黑底是 Vicor 卖东西的位置。AI 芯片功耗越大，芯片四周越塞不下足够的稳压器；VPD 改成从芯片正下方“竖着”供电，所以叫垂直供电。</p>
+    </section>
+    <section><div class="kpis">${R.kpi.map(k=>`<div class="kpi"><div class="l">${k.l}</div><div class="v">${k.v}<small>${k.u}</small></div><div class="d">${k.d}</div></div>`).join("")}</div></section>
+    <section class="charts">
+      <div class="chart">
+        <h4>季度营收<small>百万美元 · 悬停看明细</small></h4>
+        <div class="lg"><span><i style="background:${C_PROD}"></i>产品</span><span><i style="background:${C_ROY}"></i>专利授权</span><span><i style="background:repeating-linear-gradient(45deg,#999 0 2px,#fffdf8 2px 4px)"></i>Q4 指引（推算）</span></div>
+        ${revChart(R.Q)}
+        <div class="cap">一年里营收从 1.1 亿走到 2 亿，增量里有一半来自授权——卖产品之外，开始“收过路费”。</div>
+      </div>
+      <div class="chart">
+        <h4>在手订单（1 年）<small>百万美元</small></h4>
+        ${blChart(R.Q)}
+        <h4 style="margin-top:10px">毛利率</h4>
+        ${gmChart(R.Q)}
+        <div class="cap">订单一年翻 2.6 倍，跑在出货前面；毛利率随授权收入和量产效率跳升。</div>
+      </div>
+    </section>
+    <section class="mix">
+      <h4>Q3 钱从哪来<small>百万美元 · 合计 ${mixTot.toFixed(1)}</small></h4>
+      ${R.mix.map(m=>`<div class="row"><div><b>${m.n}</b><br><span style="color:var(--muted);font-size:11px">${m.s}</span></div><div class="bar"><i style="width:${m.v/mixMax*100}%;background:${C_INK}"></i></div><div class="n">${m.v.toFixed(1)}${m.g?`<em>${m.g}</em>`:''}</div></div>`).join("")}
+      <p class="chain-note">“先进产品”口径（含授权）合计 1.389 亿，环比 +47.5%。</p>
+    </section>
+    <section>
+      <h4>这张财报说明产业链在发生什么</h4>
+      <ul class="sig">${R.sig.map((s,i)=>`<li class="${s.wide?'wide':''}"><b>${i+1}</b><strong>${s.h}</strong>${s.t}<br>${s.tg.map(t=>`<span class="tag">${t}</span>`).join("")}</li>`).join("")}</ul>
+    </section>
+    <section class="duo">
+      <div class="guide">
+        <h4>Q4 指引</h4>
+        <div class="gv"><div><b>${R.guide.p}</b><span>产品营收环比</span></div><div><b>${R.guide.r}</b><span>授权收入</span></div><div><b>${R.guide.tot}</b><span>总营收（推算）</span></div></div>
+        <div style="color:var(--muted);font-size:12.5px">${R.guide.note}</div>
+      </div>
+      <div>
+        <h4>要留意的</h4>
+        <ul class="risk">${R.risk.map(r=>`<li>${r}</li>`).join("")}</ul>
+      </div>
+    </section>
+    <details><summary>查看数据表</summary>
+      <table><thead><tr><th>季度</th><th>产品</th><th>授权</th><th>合计</th><th>毛利率</th><th>在手订单</th></tr></thead>
+      <tbody>${R.Q.map(d=>`<tr><td>${d.q}</td><td>${d.guide?'≈':''}${d.p.toFixed(1)}</td><td>${d.guide?'≥':''}${d.r.toFixed(1)}</td><td>${d.guide?'≈':''}${(d.p+d.r).toFixed(1)}</td><td>${d.gm?d.gm+'%':'—'}</td><td>${d.bl?d.bl.toFixed(0):'—'}</td></tr>`).join("")}</tbody></table>
+      <p style="color:var(--muted);margin-top:6px">单位百万美元。Q4'25 的 EPS 含一笔 $2730 万一次性税收收益，不影响营收。Q4'26E 为按公司指引推算，非公司给出的总数。</p>
+    </details>
+    <div class="src">来源：${R.src.map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">${n}</a>`).join(" · ")}。中立 · 无持仓 · 不构成买卖建议。</div>
+  </div>`;
+}
+
+// 弹窗：点背景关闭；图表悬停提示
+(()=>{
+  const dlg=document.getElementById("rpt"), tip=document.getElementById("tip");
+  dlg.addEventListener("click",e=>{ if(e.target===dlg) dlg.close(); });
+  dlg.addEventListener("close",()=>tip.style.display="none");
+  dlg.addEventListener("mousemove",e=>{
+    const t=e.target.closest&&e.target.closest("[data-tip]");
+    if(!t){ tip.style.display="none"; return; }
+    tip.innerHTML=decodeURIComponent(t.dataset.tip); tip.style.display="block";
+    const r=tip.getBoundingClientRect();
+    let x=e.clientX+14, y=e.clientY+14;
+    if(x+r.width>innerWidth-8) x=e.clientX-r.width-14;
+    if(y+r.height>innerHeight-8) y=e.clientY-r.height-14;
+    tip.style.left=x+"px"; tip.style.top=y+"px";
+  });
+  dlg.addEventListener("mouseleave",()=>tip.style.display="none");
+})();
+
+select(E.find(e=>e.tk==="FOMC"),true);
+let rt; window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(render,150);});
+</script>
+</body>
+</html>
